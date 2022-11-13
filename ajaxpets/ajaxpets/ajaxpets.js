@@ -6,25 +6,58 @@
 "use strict";
 (function() {
 
+  const AJAX_Base_URL = "https://courses.cs.washington.edu/courses/cse154/webservices/pets/ajaxpets.php";
   window.addEventListener("load", init);
 
   /**
    * TODO: What do we need to initialize?
    */
   function init() {
-    // TODO
+    let inputRadio = qsa("input[name='animal']");
+	for (let i = 0; i < inputRadio.length; i++) {
+		inputRadio[i].addEventListener("change",makeRequest);
+	}
   }
 
   /**
    * TODO: Fetch data from the CSE 154 ajax pets api!
    */
   function makeRequest() {
-    // TODO
+    let animalType = this.value;
+	
+	fetch(AJAX_Base_URL + "?animal=" + animalType)
+		.then(checkStatus)
+		.then(resp => resp.text())
+		.then(displayPictures)
+		.catch(console.error);
   }
 
   /**
    * TODO: Implement any other functions you need
    */
+   
+   function displayPictures(response){
+	   response = response.trim().split("\n");
+	   console.log(response);
+	   clearPreviousPictures();
+	   for (let i = 0; i<response.length; i++){
+		   let imagePath = response[i];
+		   let img = document.createElement("img");
+		   img.src = imagePath;
+		   img.alt = "adorable creature";
+		   id("pictures").appendChild(img);
+	   }
+   }
+   
+   function clearPreviousPictures(){
+	   
+	   let images = qsa("#pictures img");
+	   
+	   for (let i = 0; i < images.length; i++){
+		   images[i].parentNode.removeChild(images[i]);
+	   }
+	   
+   }
 
   /* ------------------------------ Helper Functions  ------------------------------ */
 
